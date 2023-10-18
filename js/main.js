@@ -7,16 +7,31 @@ function fetchData() {
 	fetch(url)
 		.then((response) => response.json())
 		.then((data) => {
-			const countryData = data[0];
+			let countryData;
+
+			if (data.length > 1) {
+				countryData = data.find(
+					(country) =>
+						country.name.common.toLowerCase() === countryName.toLowerCase()
+				);
+			} else {
+				countryData = data[0];
+			}
+
+			if (!countryData) {
+				console.error("Country not found.");
+				return;
+			}
+
 			document.getElementById("nameOfCountry").textContent =
 				countryData.name.common;
 			document.getElementById("capital").textContent =
-				"Capital: " + countryData.capital[0];
+				"Capital: " + (countryData.capital[0] || "N/A");
 			document.getElementById("borders").textContent =
-				"Borders: " + countryData.borders.join(", ");
-			document.getElementById("coatOfArms").src = countryData.coatOfArms.png;
+				"Borders: " + (countryData.borders?.join(", ") || "N/A");
+			document.getElementById("coatOfArms").src = countryData.flags.png;
 			document.getElementById("continent").textContent =
-				"Continent: " + countryData.continents[0];
+				"Continent: " + (countryData.continents[0] || "N/A");
 			document.getElementById("independent").textContent =
 				"Independent: " + (countryData.independent ? "Yes" : "No");
 
@@ -27,7 +42,7 @@ function fetchData() {
 
 			document.getElementById("mapLink").href = countryData.maps.googleMaps;
 			document.getElementById("timezone").textContent =
-				"Timezone: " + countryData.timezones[0];
+				"Timezone: " + (countryData.timezones[0] || "N/A");
 			document.getElementById("region").textContent =
 				"Region: " + countryData.region;
 			document.getElementById("population").textContent =
